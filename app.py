@@ -17,3 +17,17 @@ migrate = Migrate(app,db)
 def index():
     return render_template("index.html")
  
+
+@app.route('/login', methods = ['POST', 'GET'])
+def login():
+    if request.method == 'GET':
+        return "Login via the login Form"
+     
+    if request.method == 'POST':
+        email = request.form['email']
+        query = request.form['query']
+        formatted_query = [query]
+        new_user = User(user_email=email, user_queries=formatted_query)
+        db.session.add(new_user)
+        db.session.commit()
+        return f"Done!!"
