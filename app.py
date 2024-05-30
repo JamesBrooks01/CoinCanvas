@@ -49,3 +49,14 @@ def delete():
     db.session.delete(result)
     db.session.commit()
     return make_response('', 410)
+
+@app.route('/update')
+def update():
+    id = request.form['id']
+    new_query = request.form['query']
+    result = db.session.execute(db.select(User).filter_by(id=id)).scalar_one()
+    array = [new_query]
+    new_array = result.user_queries + array
+    result.user_queries = new_array
+    db.session.commit()
+    return make_response('', 201)
