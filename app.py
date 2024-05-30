@@ -41,3 +41,11 @@ def create():
     db.session.add(new_entry)
     db.session.commit()
     return make_response('', 201)
+
+@app.route('/delete')
+def delete():
+    id = request.form['id']
+    result = User.query.filter_by(id=id).first()
+    db.session.delete(result)
+    db.session.commit()
+    return make_response('', 410)
