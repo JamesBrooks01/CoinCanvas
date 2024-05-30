@@ -31,3 +31,13 @@ def login():
         db.session.add(new_user)
         db.session.commit()
         return f"Done!!"
+    
+@app.route('/create')
+def create():
+    email = request.form['email']
+    query = request.form['query']
+    formatted_query = [query]
+    new_entry = User(user_email=email, user_queries=formatted_query)
+    db.session.add(new_entry)
+    db.session.commit()
+    return make_response('', 201)
