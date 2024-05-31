@@ -65,15 +65,18 @@ def logout():
 @app.route('/update',methods=["PUT","DELETE"])
 def update():
     user = request.form['user']
+    auth = request.authorization.token
     new_query = request.form['query']
-
-    if request.method == "PUT":
-        user_queries.append(new_query)
-        return_array = user_queries
-        update_user(user,return_array)
-        return make_response('', 201)
-    if request.method == "DELETE":
-        user_queries.remove(new_query)
-        return_array = user_queries
-        update_user(user,return_array)
-        return make_response('', 410)
+    if auth == os.environ.get('APP_SECRET_KEY'):
+        if request.method == "PUT":
+            user_queries.append(new_query)
+            return_array = user_queries
+            update_user(user,return_array)
+            return make_response('', 201)
+        if request.method == "DELETE":
+            user_queries.remove(new_query)
+            return_array = user_queries
+            update_user(user,return_array)
+            return make_response('', 410)
+    else:
+        return make_response('', 401)
