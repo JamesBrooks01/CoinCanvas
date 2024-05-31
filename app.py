@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify, make_response, redirect, session, url_for
 from flask_migrate import Migrate
-from models import db, User
 import os
+from vercel_db import get_data, get_all_users, create_user, delete_user, update_user, db
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
+user_queries = []
 
 app = Flask(__name__)
 
@@ -33,7 +34,6 @@ def index():
     return render_template("index.html", session=data)
 
 
-
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -45,25 +45,6 @@ def callback():
     token = oauth.auth0.authorize_access_token()
     session['user'] = token
     return redirect('/')
-
-@app.route('/delete')
-def delete():
-    id = request.form['id']
-    result = User.query.filter_by(id=id).first()
-    db.session.delete(result)
-    db.session.commit()
-    return make_response('', 410)
-
-@app.route('/update')
-def update():
-    id = request.form['id']
-    new_query = request.form['query']
-    result = db.session.execute(db.select(User).filter_by(id=id)).scalar_one()
-    array = [new_query]
-    new_array = result.user_queries + array
-    result.user_queries = new_array
-    db.session.commit()
-    return make_response('', 201)
 
 @app.route('/logout')
 def logout():
@@ -81,4 +62,18 @@ def logout():
     )
 
 
+@app.route('/update',methods=["PUT","DELETE"])
+def update():
+    user = request.form['user']
+    new_query = request.form['query']
 
+    if request.method == "PUT":
+        user_queries.append(new_query)
+        return_array = user_queries
+        update_user(user,return_array)
+        return make_response('', 201)
+    if request.method == "DELETE":
+        user_queries.remove(new_query)
+        return_array = user_queries
+        update_user(user,return_array)
+        return make_response('', 410)
