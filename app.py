@@ -6,6 +6,7 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
 user_queries = []
+admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
 
@@ -77,6 +78,19 @@ def logout():
         )        
     )
 
+@app.route('/result')
+def result():
+    user = session.get('user')
+    if user:
+        current = user['userinfo']['email']
+        if current == admin:
+            data = get_all_users()
+            fill_queries(current)
+            return render_template('result.html', data=data)
+        else:
+            return redirect('/')
+    else:
+        return redirect('/')
 
 @app.route('/update',methods=["PUT","DELETE"])
 def update():
