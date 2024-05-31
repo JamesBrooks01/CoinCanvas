@@ -28,10 +28,25 @@ oauth.register(
 db.init_app(app)
 migrate = Migrate(app,db)
 
+def fill_queries(user):
+    data = get_data(user)
+    if data == None:
+        create_user(user)
+        fill_queries(user)
+    user_queries.clear()
+    for query in data.user_queries:
+        if query not in user_queries:
+            user_queries.append(query)
+    return data
+
 @app.route("/")
 def index():
     data = session.get('user')
-    return render_template("index.html", session=data)
+    if data:
+        fill_queries(data['userinfo']['email'])
+        return render_template("index.html", session=data)
+    else:
+        return render_template('index.html')
 
 
 @app.route("/login")
@@ -49,6 +64,7 @@ def callback():
 @app.route('/logout')
 def logout():
     session.clear()
+    user_queries.clear()
     return redirect(
         "https://" + os.environ.get("AUTH0_DOMAIN")
         + "/v2/logout?"
