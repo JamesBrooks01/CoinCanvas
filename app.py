@@ -33,11 +33,11 @@ oauth.register(
 db.init_app(app)
 migrate = Migrate(app,db)
 
-def fill_queries(user):
+def  fill_queries(user):
     data = get_data(user)
     if data == None:
         create_user(user)
-        fill_queries(user)
+        return redirect('/')
     user_queries.clear()
     for query in data.user_queries:
         if query not in user_queries:
@@ -147,3 +147,4 @@ def api():
         return render_template('result.html',data=data)
     else:
         return render_template('index.html', errortext=data, session=user)
+    
