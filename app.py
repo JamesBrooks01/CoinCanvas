@@ -14,7 +14,7 @@ admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRES_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRES_URL2')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 
