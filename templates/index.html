@@ -1,14 +1,39 @@
 {% extends "layout.html" %}
 
 {% block header %}
-
+    <div class="login">
     {% if session %}
-        <h2>{{session.userinfo.name}}</h2>
-        <img src="{{ session['userinfo']['picture'] }}" alt="">
-        <p><a href="/logout">Logout</a></p>
+        <h2 class="login_info">{{session.userinfo.name}}</h2>
+        <img class="login_info" src="{{ session['userinfo']['picture'] }}" alt="User Google Profile Picture" >
+        <p class="login_info" class="logout_button"><a href="/logout">Logout</a></p>
     {% else %}
-        <h1>Welcome Guest</h1>
-        <p><a href="/login">Login</a></p>
+        <h2 class="login_info">Welcome Guest</h1>
+        <p class="login_info"><a href="/login">Login</a></p>
     {% endif %}
+    </div>
+
+    <h1>Coin Canvas</h1>
+{% endblock %}
+
+{% block body %}
+
+    <form method="post" action="/api">
+        <input type="text" name="query" autofocus autocomplete="off" placeholder="Search for a Coin or Stock (e.g. BTC)">
+        <input type="radio" name="type" value="Stock"> Stock
+        <input type="radio" name="type" value="Crypto"> Crypto
+        <input type="submit">
+    </form>
+
+{% if errortext %}
+
+    <div>{{errortext}}</div>
+
+{% endif %}
+
+{% if data %}
+
+    {{ data }}
+
+{% endif %}
 
 {% endblock %}
