@@ -4,13 +4,17 @@ import os
 from vercel_db import get_data, get_all_users, create_user, delete_user, update_user, db
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
+import requests
+from datetime import date
+import datetime
+import orjson
 
 user_queries = []
 admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRES_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 
@@ -110,3 +114,25 @@ def update():
             return make_response('', 410)
     else:
         return make_response('', 401)
+    
+def grab_data(query,type):
+    today = date.today()
+    past = today - datetime.timedelta(150)
+    base_url = 'https://api.polygon.io/v2/aggs/ticker/'
+    end_url = f'/range/1/day/{past}/{today}?adjusted=true&sort=asc'
+    request_query = ''
+    if query not in user_queries:
+        user_queries.append(query)
+    if type == 'Stock':
+        request_query += f"{query}"
+    elif type == 'Crypto':
+        request_query += f'X:{query}USD'
+    else:
+        return 'Invalid Type'
+    auth = os.environ.get('POLYGON_API_KEY')
+    header = {"Authorization": f'Bearer {auth}'}
+    data = requests.get(f"{base_url}{request_query}{end_url}",headers=header)
+    dict_converted_data = orjson.loads(data.text)
+    sliced_data = dict_converted_data['results']
+    sanitized_data = sliced_data[len(sliced_data)-100:]
+    return sanitized_data
