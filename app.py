@@ -136,3 +136,14 @@ def update():
             return make_response('', 410)
     else:
         return make_response('', 401)
+
+@app.route('/api', methods=['POST'])
+def api():
+    query = request.form.get('query')
+    type = request.form.get('type')
+    data = grab_data(query,type)
+    user = session.get('user')
+    if data != 'Invalid Type':
+        return render_template('result.html',data=data)
+    else:
+        return render_template('index.html', errortext=data, session=user)
