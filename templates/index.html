@@ -12,3 +12,26 @@
     {% endif %}
 
 {% endblock %}
+
+{% block body %}
+
+    <form method="post" action="/api">
+        <input type="text" name="query" autofocus autocomplete="off" placeholder="Search for a Coin or Stock (e.g. BTC)">
+        <input type="radio" name="type" value="Stock"> Stock
+        <input type="radio" name="type" value="Crypto"> Crypto
+        <input type="submit">
+    </form>
+
+{% if errortext %}
+
+    <div>{{errortext}}</div>
+
+{% endif %}
+
+{% if data %}
+
+    {{ data }}
+
+{% endif %}
+
+{% endblock %}
