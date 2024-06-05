@@ -120,5 +120,8 @@ node_modules/
 
 # poetry
 poetry.lock
+
+#user
 .vercel
 .production.env
+requests_cache.sqlite
