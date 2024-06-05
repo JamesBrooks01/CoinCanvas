@@ -44,7 +44,7 @@ def  fill_queries(user):
     user_queries.clear()
     for query in data.user_queries:
         if query not in user_queries:
-            user_queries.append(query)
+            user_queries.append([query[0],query[1]])
     return data
 
 def grab_data(query,type):
