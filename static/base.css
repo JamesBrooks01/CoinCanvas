@@ -40,3 +40,16 @@ a{
     border-radius: 10px;
     padding: 5%;
 }
+
+.graphBox{
+    display:flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.graph{
+    width: 40%;
+    margin-top: 5%;
+    border: 1px solid gold;
+    border-radius: 20px;
+}
