@@ -15,7 +15,8 @@ admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
 
-requests_cache.install_cache(cache_name='requests_cache', backend='sqlite', expire_after=86400)
+requests_cache.install_cache('requests_cache',backend='filesystem',expire_after=84600)
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRES_URL2')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
