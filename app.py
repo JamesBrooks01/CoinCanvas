@@ -69,6 +69,17 @@ def grab_data(query,type):
     sanitized_data = sliced_data[len(sliced_data)-100:]
     return sanitized_data
 
+def graph(data):
+    labels = [row['t'] for row in data]
+    formatted_labels = []
+    for label in labels:
+        formatted_date = label // 1000
+        timestamped_date = date.fromtimestamp(formatted_date)
+        formatted_labels.append(str(timestamped_date))
+    values = [row['c'] for row in data]
+
+    return [formatted_labels,values]
+
 @app.route("/")
 def index():
     data = session.get('user')
