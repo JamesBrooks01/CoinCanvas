@@ -83,7 +83,11 @@ def index():
     data = session.get('user')
     if data:
         fill_queries(data['userinfo']['email'])
-        return render_template("index.html", session=data)
+        graphs = []
+        for query in user_queries:
+            return_graph = grab_data(query[0],query[1])
+            graphs.append(graph(return_graph))
+        return render_template("index.html", session=data, graphs=graphs, queries=user_queries)
     else:
         return render_template('index.html')
 
