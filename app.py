@@ -134,19 +134,20 @@ def result():
     else:
         return redirect('/')
 
-@app.route('/update',methods=["PUT","DELETE"])
+@app.route('/update',methods=["POST","DELETE"])
 def update():
     user = request.form['user']
     auth = request.authorization.token
     new_query = request.form['query']
     if auth == os.environ.get('APP_SECRET_KEY'):
-        if request.method == "PUT":
-            user_queries.append(new_query)
+        if request.method == "POST":
             return_array = user_queries
             update_user(user,return_array)
             return make_response('', 201)
         if request.method == "DELETE":
-            user_queries.remove(new_query)
+            for query in user_queries:
+                if query[0] == new_query:
+                    user_queries.remove(query)
             return_array = user_queries
             update_user(user,return_array)
             return make_response('', 410)
