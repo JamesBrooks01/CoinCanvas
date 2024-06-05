@@ -158,10 +158,20 @@ def update():
 def api():
     query = request.form.get('query')
     type = request.form.get('type')
-    data = grab_data(query,type)
-    user = session.get('user')
-    if data != 'Invalid Type':
-        return render_template('result.html',data=data)
-    else:
-        return render_template('index.html', errortext=data, session=user)
+    if type == None:
+        return render_template('index.html', errortext="Invalid Type", session=user)
+    new_query = [query,type]
+    if new_query not in user_queries:
+        user_queries.append(new_query)
+        update_url = os.environ.get('APP_URL')
+        user = session.get('user')
+        user_auth = os.environ.get("APP_SECRET_KEY")
+        user_header = {"Authorization": f"Bearer {user_auth}"}
+        data = {
+            "query": query,
+            'user': user['userinfo']['email']
+        }
+        requests.post(f'{update_url}/update',data=data,headers=user_header)
+
+    return redirect(url_for('index'))
     
