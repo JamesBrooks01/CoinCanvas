@@ -55,8 +55,6 @@ def grab_data(query,type):
         request_query += f'X:{query}USD'
     else:
         return 'Invalid Type'
-    if query not in user_queries:
-        user_queries.append(query)
     today = date.today()
     past = today - datetime.timedelta(150)
     base_url = 'https://api.polygon.io/v2/aggs/ticker/'
