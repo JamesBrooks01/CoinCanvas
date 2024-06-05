@@ -1,6 +1,8 @@
 alembic==1.13.1
+attrs==23.2.0
 Authlib==1.3.0
 blinker==1.8.2
+cattrs==23.2.3
 certifi==2024.2.2
 cffi==1.16.0
 charset-normalizer==3.3.2
@@ -19,13 +21,17 @@ Mako==1.3.5
 MarkupSafe==2.1.5
 orjson==3.10.3
 packaging==24.0
+platformdirs==4.2.2
 pluggy==1.5.0
 psycopg2-binary==2.9.9
 pycparser==2.22
 pytest==8.2.1
 python-dotenv==1.0.1
 requests==2.32.3
+requests-cache==1.2.0
+six==1.16.0
 SQLAlchemy==2.0.30
 typing_extensions==4.12.0
+url-normalize==1.4.3
 urllib3==2.2.1
 Werkzeug==3.0.3
