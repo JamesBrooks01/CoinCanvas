@@ -174,4 +174,18 @@ def api():
         requests.post(f'{update_url}/update',data=data,headers=user_header)
 
     return redirect(url_for('index'))
+
+@app.route('/delete', methods=["POST"])
+def delete():
+    deletion_query = request.form.get('delete')
+    update_url = os.environ.get('APP_URL')
+    user = session.get('user')
+    user_auth = os.environ.get("APP_SECRET_KEY")
+    user_header = {"Authorization": f"Bearer {user_auth}"}
+    data = {
+        "query": deletion_query,
+        'user': user['userinfo']['email']
+    }
+    requests.delete(f'{update_url}/update',data=data,headers=user_header)
+    return redirect(url_for('index'))
     
