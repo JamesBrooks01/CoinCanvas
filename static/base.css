@@ -11,6 +11,16 @@ header{
   display: flex;
 }
 
+body{
+    text-align: center;
+}
+
+.graphBox{
+    display:flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
 h1{
     font-size: 4vw;
     color: gold;
@@ -30,21 +40,11 @@ h1{
     text-align: center;
 }
 
-body{
-    text-align: center;
-}
-
 a{
     background-color: white;
     color: blue;
     border-radius: 10px;
     padding: 5%;
-}
-
-.graphBox{
-    display:flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
 }
 
 .graph{
