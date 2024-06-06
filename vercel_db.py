@@ -16,7 +16,7 @@ def create_user(user):
     db.session.commit() 
 
 def delete_user(user):
-    result = User.query.filter_by(user=user).first()
+    result = User.query.filter_by(user_email=user).first()
     db.session.delete(result)
     db.session.commit()
 
