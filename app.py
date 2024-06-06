@@ -10,7 +10,7 @@ import datetime
 import orjson
 import requests_cache
 
-user_queries = []
+# user_queries = []
 admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
@@ -42,11 +42,12 @@ def  fill_queries(user):
     if data == None:
         create_user(user)
         return redirect('/')
-    user_queries.clear()
+    return_array = []
+    # user_queries.clear()
     for query in data.user_queries:
-        if query not in user_queries:
-            user_queries.append([query[0],query[1]])
-    return data
+        if query not in return_array:
+            return_array.append(query)
+    return return_array
 
 def grab_data(query,type):
     request_query = ''
@@ -83,12 +84,13 @@ def graph(data):
 def index():
     data = session.get('user')
     if data:
-        fill_queries(data['userinfo']['email'])
+        user = fill_queries(data['userinfo']['email'])
         graphs = []
-        for query in user_queries:
+        print(user)
+        for query in user:
             return_graph = grab_data(query[0],query[1])
             graphs.append(graph(return_graph))
-        return render_template("index.html", session=data, graphs=graphs, queries=user_queries)
+        return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
         return render_template('index.html')
 
@@ -108,7 +110,7 @@ def callback():
 @app.route('/logout')
 def logout():
     session.clear()
-    user_queries.clear()
+    # user_queries.clear()
     return redirect(
         "https://" + os.environ.get("AUTH0_DOMAIN")
         + "/v2/logout?"
@@ -141,15 +143,20 @@ def update():
     auth = request.authorization.token
     new_query = request.form['query']
     if auth == os.environ.get('APP_SECRET_KEY'):
+        data = get_data(user)
         if request.method == "POST":
-            return_array = user_queries
-            update_user(user,return_array)
+            type = request.form['type']
+            new_array = [new_query,type]
+            data_array = data.user_queries
+            data_array.append(new_array)
+            update_user(user,data_array)    
             return make_response('', 201)
         if request.method == "DELETE":
-            for query in user_queries:
+            data_array = data.user_queries
+            for query in data_array:
                 if query[0] == new_query:
-                    user_queries.remove(query)
-            return_array = user_queries
+                    data_array.remove(query)
+            return_array = data_array
             update_user(user,return_array)
             return make_response('', 410)
     else:
@@ -162,14 +169,15 @@ def api():
     if type == None:
         return render_template('index.html', errortext="Invalid Type", session=user)
     new_query = [query,type]
-    if new_query not in user_queries:
-        user_queries.append(new_query)
+    user = session.get('user')
+    data = get_data(user['userinfo']['email'])
+    if new_query not in data.user_queries:
         update_url = os.environ.get('APP_URL')
-        user = session.get('user')
         user_auth = os.environ.get("APP_SECRET_KEY")
         user_header = {"Authorization": f"Bearer {user_auth}"}
         data = {
             "query": query,
+            "type": type,
             'user': user['userinfo']['email']
         }
         requests.post(f'{update_url}/update',data=data,headers=user_header)
@@ -189,4 +197,3 @@ def delete():
     }
     requests.delete(f'{update_url}/update',data=data,headers=user_header)
     return redirect(url_for('index'))
-    
