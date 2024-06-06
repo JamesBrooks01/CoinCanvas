@@ -49,7 +49,7 @@ def  fill_queries(user):
             return_array.append(query)
     return return_array
 
-def grab_data(query,type):
+def api_grab(query,type):
     request_query = ''
     if type == 'Stock':
         request_query += f"{query}"
@@ -87,7 +87,7 @@ def index():
         user = fill_queries(data['userinfo']['email'])
         graphs = []
         for query in user:
-            return_graph = grab_data(query[0],query[1])
+            return_graph = api_grab(query[0],query[1])
             graphs.append(graph(return_graph))
         return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
