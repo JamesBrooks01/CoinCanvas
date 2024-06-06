@@ -86,7 +86,6 @@ def index():
     if data:
         user = fill_queries(data['userinfo']['email'])
         graphs = []
-        print(user)
         for query in user:
             return_graph = grab_data(query[0],query[1])
             graphs.append(graph(return_graph))
