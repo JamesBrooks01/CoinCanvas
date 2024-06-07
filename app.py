@@ -10,7 +10,6 @@ import datetime
 import orjson
 import requests_cache
 
-# user_queries = []
 admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
@@ -43,7 +42,6 @@ def  fill_queries(user):
         create_user(user)
         return redirect('/')
     return_array = []
-    # user_queries.clear()
     for query in data.user_queries:
         if query not in return_array:
             return_array.append(query)
@@ -65,7 +63,6 @@ def api_grab(query,type):
     header = {"Authorization": f'Bearer {auth}'}
     data = requests.get(f"{base_url}{request_query}{end_url}",headers=header)
     if data.status_code == 429:
-        print("Error Caught")
         return 'Error'
     dict_converted_data = orjson.loads(data.text)
     sliced_data = dict_converted_data['results']
@@ -116,7 +113,6 @@ def callback():
 @app.route('/logout')
 def logout():
     session.clear()
-    # user_queries.clear()
     return redirect(
         "https://" + os.environ.get("AUTH0_DOMAIN")
         + "/v2/logout?"
