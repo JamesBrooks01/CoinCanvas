@@ -169,10 +169,10 @@ def update():
 def api():
     query = request.form.get('query')
     type = request.form.get('type')
+    user = session.get('user')
     if type == None:
         return render_template('index.html', errortext="Invalid Type", session=user)
     new_query = [query,type]
-    user = session.get('user')
     data = get_data(user['userinfo']['email'])
     if new_query not in data.user_queries:
         update_url = os.environ.get('APP_URL')
