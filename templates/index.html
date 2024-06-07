@@ -36,6 +36,18 @@
 
 {% if graphs %}
 
+<div class="timeframeBox">
+    <form action="/" method="get">
+        <input type="submit" value="3" name="timeframe">Days
+        <input type="submit" value="7" name="timeframe">Days
+        <input type="submit" value="14" name="timeframe">Days
+        <input type="submit" value="30" name="timeframe">Days
+        <input type="submit" value="60" name="timeframe">Days
+        <input type="submit" value="90" name="timeframe">Days
+        <input type="submit" value="100" name="timeframe">Days
+    </form>
+</div>
+
 <div class="graphBox">
 {% for graph in graphs %}
 
