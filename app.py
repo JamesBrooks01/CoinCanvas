@@ -64,6 +64,9 @@ def api_grab(query,type):
     auth = os.environ.get('POLYGON_API_KEY')
     header = {"Authorization": f'Bearer {auth}'}
     data = requests.get(f"{base_url}{request_query}{end_url}",headers=header)
+    if data.status_code == 429:
+        print("Error Caught")
+        return 'Error'
     dict_converted_data = orjson.loads(data.text)
     sliced_data = dict_converted_data['results']
     sanitized_data = sliced_data[len(sliced_data)-100:]
