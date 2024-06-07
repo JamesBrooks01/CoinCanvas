@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, jsonify, make_response, redirect, session, url_for
+from flask import Flask, render_template, request, make_response, redirect, session, url_for
 from flask_migrate import Migrate
 import os
-from vercel_db import get_data, get_all_users, create_user, delete_user, update_user, db
+from vercel_db import get_data, get_all_users, create_user, update_user, db
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 import requests
