@@ -39,7 +39,7 @@ def  fill_queries(user):
     data = get_data(user)
     if data == None:
         create_user(user)
-        return redirect('/')
+        return []
     return_array = []
     for query in data.user_queries:
         if query not in return_array:
