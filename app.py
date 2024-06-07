@@ -92,6 +92,9 @@ def index():
         graphs = []
         for query in user:
             return_graph = api_grab(query[0],query[1])
+            if return_graph == 'Error':
+                error_message = "Too Many API Requests. Please wait a few minutes before trying again. If this error continues to appear, please contact the dev."
+                return render_template('index.html',errortext=error_message, session=data)
             graphs.append(graph(return_graph[100-int(time_frame):]))
         return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
