@@ -83,12 +83,13 @@ def graph(data):
 @app.route("/")
 def index():
     data = session.get('user')
+    time_frame = request.args.get('timeframe',100)
     if data:
         user = fill_queries(data['userinfo']['email'])
         graphs = []
         for query in user:
             return_graph = api_grab(query[0],query[1])
-            graphs.append(graph(return_graph))
+            graphs.append(graph(return_graph[100-int(time_frame):]))
         return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
         return render_template('index.html')
