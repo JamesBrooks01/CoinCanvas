@@ -10,7 +10,6 @@ import datetime
 import orjson
 import requests_cache
 
-# user_queries = []
 admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
@@ -43,13 +42,12 @@ def  fill_queries(user):
         create_user(user)
         return redirect('/')
     return_array = []
-    # user_queries.clear()
     for query in data.user_queries:
         if query not in return_array:
             return_array.append(query)
     return return_array
 
-def grab_data(query,type):
+def api_grab(query,type):
     request_query = ''
     if type == 'Stock':
         request_query += f"{query}"
@@ -64,6 +62,8 @@ def grab_data(query,type):
     auth = os.environ.get('POLYGON_API_KEY')
     header = {"Authorization": f'Bearer {auth}'}
     data = requests.get(f"{base_url}{request_query}{end_url}",headers=header)
+    if data.status_code == 429:
+        return 'Error'
     dict_converted_data = orjson.loads(data.text)
     sliced_data = dict_converted_data['results']
     sanitized_data = sliced_data[len(sliced_data)-100:]
@@ -83,13 +83,16 @@ def graph(data):
 @app.route("/")
 def index():
     data = session.get('user')
+    time_frame = request.args.get('timeframe',100)
     if data:
         user = fill_queries(data['userinfo']['email'])
         graphs = []
-        print(user)
         for query in user:
-            return_graph = grab_data(query[0],query[1])
-            graphs.append(graph(return_graph))
+            return_graph = api_grab(query[0],query[1])
+            if return_graph == 'Error':
+                error_message = "Too Many API Requests. Please wait a few minutes before trying again. If this error continues to appear, please contact the dev."
+                return render_template('index.html',errortext=error_message, session=data)
+            graphs.append(graph(return_graph[100-int(time_frame):]))
         return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
         return render_template('index.html')
@@ -110,7 +113,6 @@ def callback():
 @app.route('/logout')
 def logout():
     session.clear()
-    # user_queries.clear()
     return redirect(
         "https://" + os.environ.get("AUTH0_DOMAIN")
         + "/v2/logout?"
@@ -166,10 +168,10 @@ def update():
 def api():
     query = request.form.get('query')
     type = request.form.get('type')
+    user = session.get('user')
     if type == None:
         return render_template('index.html', errortext="Invalid Type", session=user)
     new_query = [query,type]
-    user = session.get('user')
     data = get_data(user['userinfo']['email'])
     if new_query not in data.user_queries:
         update_url = os.environ.get('APP_URL')

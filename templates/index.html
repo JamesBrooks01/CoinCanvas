@@ -28,6 +28,7 @@
         <input type="submit">
     </form>
 
+    <p> For the benefit of your fellow users, please try to keep your concurrent maximum charts at 5 or below so as not to surpass the API limit with a block of requests when the cache resets. Thank You.</p>
 {% if errortext %}
 
     <div>{{errortext}}</div>
@@ -35,6 +36,18 @@
 {% endif %}
 
 {% if graphs %}
+
+<div class="timeframeBox">
+    <form action="/" method="get">
+        <input type="submit" value="3" name="timeframe">Days
+        <input type="submit" value="7" name="timeframe">Days
+        <input type="submit" value="14" name="timeframe">Days
+        <input type="submit" value="30" name="timeframe">Days
+        <input type="submit" value="60" name="timeframe">Days
+        <input type="submit" value="90" name="timeframe">Days
+        <input type="submit" value="100" name="timeframe">Days
+    </form>
+</div>
 
 <div class="graphBox">
 {% for graph in graphs %}
