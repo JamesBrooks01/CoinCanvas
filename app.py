@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, make_response, redirect, session, url_for
 from flask_migrate import Migrate
 import os
-from vercel_db import get_data, get_all_users, create_user, update_user, db
+from vercel_db import get_data, create_user, update_user, db
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 import requests
@@ -10,7 +10,6 @@ import datetime
 import orjson
 import requests_cache
 
-admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
 
@@ -124,20 +123,6 @@ def logout():
             quote_via=quote_plus,
         )        
     )
-
-@app.route('/result')
-def result():
-    user = session.get('user')
-    if user:
-        current = user['userinfo']['email']
-        if current == admin:
-            data = get_all_users()
-            fill_queries(current)
-            return render_template('result.html', data=data)
-        else:
-            return redirect('/')
-    else:
-        return redirect('/')
 
 @app.route('/update',methods=["POST","DELETE"])
 def update():
