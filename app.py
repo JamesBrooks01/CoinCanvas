@@ -64,6 +64,17 @@ def api_grab(query,type):
     if data.status_code == 429:
         return 'Error'
     dict_converted_data = orjson.loads(data.text)
+    if dict_converted_data['queryCount'] == 0:
+        app_url = os.environ.get('APP_URL')
+        user = session.get('user')
+        user_auth = os.environ.get("APP_SECRET_KEY")
+        user_header = {"Authorization": f"Bearer {user_auth}"}
+        data = {
+            "query": query,
+            'user': user['userinfo']['email']
+        }
+        requests.delete(f'{app_url}/update',data=data,headers=user_header)
+        return 'Invalid Query'
     sliced_data = dict_converted_data['results']
     sanitized_data = sliced_data[len(sliced_data)-100:]
     return sanitized_data
