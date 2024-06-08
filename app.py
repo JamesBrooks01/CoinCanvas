@@ -160,7 +160,9 @@ def api():
     query = request.form.get('query')
     type = request.form.get('type')
     user = session.get('user')
-    if type == None:
+    if not user:
+        return make_response('', 400)
+    if type not in ['Stock', 'Crypto']:
         return render_template('index.html', errortext="Invalid Type", session=user)
     new_query = [query,type]
     data = get_data(user['userinfo']['email'])
