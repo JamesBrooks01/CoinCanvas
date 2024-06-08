@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, jsonify, make_response, redirect, session, url_for
+from flask import Flask, render_template, request, make_response, redirect, session, url_for
 from flask_migrate import Migrate
 import os
-from vercel_db import get_data, get_all_users, create_user, delete_user, update_user, db
+from vercel_db import get_data, create_user, update_user, db
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 import requests
@@ -10,7 +10,6 @@ import datetime
 import orjson
 import requests_cache
 
-admin = os.environ.get('ADMIN')
 
 app = Flask(__name__)
 
@@ -40,7 +39,7 @@ def  fill_queries(user):
     data = get_data(user)
     if data == None:
         create_user(user)
-        return redirect('/')
+        return []
     return_array = []
     for query in data.user_queries:
         if query not in return_array:
@@ -65,6 +64,17 @@ def api_grab(query,type):
     if data.status_code == 429:
         return 'Error'
     dict_converted_data = orjson.loads(data.text)
+    if dict_converted_data['queryCount'] == 0:
+        app_url = os.environ.get('APP_URL')
+        user = session.get('user')
+        user_auth = os.environ.get("APP_SECRET_KEY")
+        user_header = {"Authorization": f"Bearer {user_auth}"}
+        data = {
+            "query": query,
+            'user': user['userinfo']['email']
+        }
+        requests.delete(f'{app_url}/update',data=data,headers=user_header)
+        return 'Invalid Query'
     sliced_data = dict_converted_data['results']
     sanitized_data = sliced_data[len(sliced_data)-100:]
     return sanitized_data
@@ -91,6 +101,9 @@ def index():
             return_graph = api_grab(query[0],query[1])
             if return_graph == 'Error':
                 error_message = "Too Many API Requests. Please wait a few minutes before trying again. If this error continues to appear, please contact the dev."
+                return render_template('index.html',errortext=error_message, session=data)
+            if return_graph == 'Invalid Query':
+                error_message = "Invalid Query, Perhaps the name doesn't match the official name correctly or the type was selected wrong. Either refresh the page or try your query again. Thank You."
                 return render_template('index.html',errortext=error_message, session=data)
             graphs.append(graph(return_graph[100-int(time_frame):]))
         return render_template("index.html", session=data, graphs=graphs, queries=user)
@@ -125,34 +138,26 @@ def logout():
         )        
     )
 
-@app.route('/result')
-def result():
-    user = session.get('user')
-    if user:
-        current = user['userinfo']['email']
-        if current == admin:
-            data = get_all_users()
-            fill_queries(current)
-            return render_template('result.html', data=data)
-        else:
-            return redirect('/')
-    else:
-        return redirect('/')
-
 @app.route('/update',methods=["POST","DELETE"])
 def update():
-    user = request.form['user']
+    user = request.form.get('user')
+    if not user:
+        return make_response('', 400)
     auth = request.authorization.token
-    new_query = request.form['query']
+    new_query = request.form.get('query')
     if auth == os.environ.get('APP_SECRET_KEY'):
         data = get_data(user)
+        if not data:
+            return make_response('', 400)
         if request.method == "POST":
-            type = request.form['type']
+            type = request.form.get('type')
+            if type not in ['Stock', 'Crypto']:
+                return make_response('', 400)
             new_array = [new_query,type]
             data_array = data.user_queries
             data_array.append(new_array)
             update_user(user,data_array)    
-            return make_response('', 201)
+            return make_response('', 204)
         if request.method == "DELETE":
             data_array = data.user_queries
             for query in data_array:
@@ -160,7 +165,7 @@ def update():
                     data_array.remove(query)
             return_array = data_array
             update_user(user,return_array)
-            return make_response('', 410)
+            return make_response('', 204)
     else:
         return make_response('', 401)
 
@@ -169,7 +174,9 @@ def api():
     query = request.form.get('query')
     type = request.form.get('type')
     user = session.get('user')
-    if type == None:
+    if not user:
+        return make_response('', 400)
+    if type not in ['Stock', 'Crypto']:
         return render_template('index.html', errortext="Invalid Type", session=user)
     new_query = [query,type]
     data = get_data(user['userinfo']['email'])
@@ -191,6 +198,8 @@ def delete():
     deletion_query = request.form.get('delete')
     update_url = os.environ.get('APP_URL')
     user = session.get('user')
+    if not user:
+        return make_response('', 400)
     user_auth = os.environ.get("APP_SECRET_KEY")
     user_header = {"Authorization": f"Bearer {user_auth}"}
     data = {
