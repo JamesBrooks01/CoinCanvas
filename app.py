@@ -126,18 +126,24 @@ def logout():
 
 @app.route('/update',methods=["POST","DELETE"])
 def update():
-    user = request.form['user']
+    user = request.form.get('user')
+    if not user:
+        return make_response('', 400)
     auth = request.authorization.token
-    new_query = request.form['query']
+    new_query = request.form.get('query')
     if auth == os.environ.get('APP_SECRET_KEY'):
         data = get_data(user)
+        if not data:
+            return make_response('', 400)
         if request.method == "POST":
-            type = request.form['type']
+            type = request.form.get('type')
+            if type not in ['Stock', 'Crypto']:
+                return make_response('', 400)
             new_array = [new_query,type]
             data_array = data.user_queries
             data_array.append(new_array)
             update_user(user,data_array)    
-            return make_response('', 201)
+            return make_response('', 204)
         if request.method == "DELETE":
             data_array = data.user_queries
             for query in data_array:
@@ -145,7 +151,7 @@ def update():
                     data_array.remove(query)
             return_array = data_array
             update_user(user,return_array)
-            return make_response('', 410)
+            return make_response('', 204)
     else:
         return make_response('', 401)
 
