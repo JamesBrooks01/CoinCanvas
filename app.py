@@ -182,6 +182,8 @@ def delete():
     deletion_query = request.form.get('delete')
     update_url = os.environ.get('APP_URL')
     user = session.get('user')
+    if not user:
+        return make_response('', 400)
     user_auth = os.environ.get("APP_SECRET_KEY")
     user_header = {"Authorization": f"Bearer {user_auth}"}
     data = {
