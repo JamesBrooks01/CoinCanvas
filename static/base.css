@@ -9,6 +9,7 @@ header{
   color: rgb(137, 137, 137);
   background-color: rgb(17, 17, 17);
   display: flex;
+  margin-bottom: 1%;
 }
 
 body{
@@ -22,9 +23,10 @@ body{
 }
 
 h1{
-    font-size: 4vw;
+    font-size: 5vw;
     color: gold;
-    margin: auto;
+    margin-left: 30%;
+    margin-top: 4%;
 }
 
 .login{
