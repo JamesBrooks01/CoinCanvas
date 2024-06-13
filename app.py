@@ -36,6 +36,8 @@ db.init_app(app)
 migrate = Migrate(app,db)
 
 def  fill_queries(user):
+    if user == "guest@coincanvas.com":
+        return [['TSLA',"Stock"],['BTC',"Crypto"],["F", "Stock"],["RACE", "Stock"]]
     data = get_data(user)
     if data == None:
         create_user(user)
@@ -108,11 +110,15 @@ def index():
             graphs.append(graph(return_graph[100-int(time_frame):]))
         return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
-        return render_template('index.html')
-
+        session['user'] = {'userinfo': {"email": 'guest@coincanvas.com', 'name': 'Guest', 'picture': 'https://cdn.pixabay.com/photo/2017/11/10/05/46/group-2935521_1280.png'}}
+        data = session.get('user')
+        return render_template('index.html', session=data)
 
 @app.route("/login")
 def login():
+    data = session.get('user')
+    if data['userinfo']['name'] == "Guest":
+        session.clear()
     return oauth.auth0.authorize_redirect(
         redirect_uri=url_for("callback", _external=True)
     )
