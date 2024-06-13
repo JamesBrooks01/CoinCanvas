@@ -15,6 +15,8 @@ The project is primarily a remake and expansion upon a project I previously work
 - [Front-End Application Link](https://coin-canvas-eight.vercel.app)
 - [API Resource - Polygon.io](https://polygon.io)
 
+## Setup
+
 - ENV Requirements
   - Database
     - POSTGRES_URL2 - The url for the database you plan to use. It is intended to be used with a PostgreSQL database and I do not know if it will work with others. For PostgreSQL, the format must be postgresql not postgres due to SQLALchemy not supporting the latter.
@@ -37,6 +39,7 @@ The project is primarily a remake and expansion upon a project I previously work
 
 ## Tests
 
-- Test Command (TODO)
-- Number of Tests (TODO)
-- Test Coverage (TODO)
+- To run the tests, you use the command `pytest` you can also further specify which test file to run by adding the relative address to the file.
+- There are 12 tests split into,
+  - 7 that test for the intended outcome for various routes and functions.
+  - 5 that test for expected failures in the code over various routes in the ways I can anticipate potential errors.
