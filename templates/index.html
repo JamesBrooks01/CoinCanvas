@@ -10,14 +10,14 @@
         <h2 class="login_info">{{session.userinfo.name}}</h2>
         <img class="login_info" src="{{ session['userinfo']['picture'] }}" alt="User Google Profile Picture" >
         {% if session.userinfo.name == 'Guest' %}
-            <p class="login_info"><a href="/login">Login</a></p>
+            <p class="login_info"><a class="logButton" href="/login">Login</a></p>
         
         {% else %}
-            <p class="login_info" class="logout_button"><a href="/logout">Logout</a></p>
+            <p class="login_info" class="logout_button"><a class="logButton" href="/logout">Logout</a></p>
         {% endif %}
     {% else %}
         <h2 class="login_info">Welcome Guest</h1>
-        <p class="login_info"><a href="/login">Login</a></p>
+        <p class="login_info"><a class="logButton" href="/login">Login</a></p>
     {% endif %}
     </div>
 
