@@ -9,7 +9,12 @@
     {% if session %}
         <h2 class="login_info">{{session.userinfo.name}}</h2>
         <img class="login_info" src="{{ session['userinfo']['picture'] }}" alt="User Google Profile Picture" >
-        <p class="login_info" class="logout_button"><a href="/logout">Logout</a></p>
+        {% if session.userinfo.name == 'Guest' %}
+            <p class="login_info"><a href="/login">Login</a></p>
+        
+        {% else %}
+            <p class="login_info" class="logout_button"><a href="/logout">Logout</a></p>
+        {% endif %}
     {% else %}
         <h2 class="login_info">Welcome Guest</h1>
         <p class="login_info"><a href="/login">Login</a></p>
@@ -21,6 +26,11 @@
 
 {% block body %}
 
+{% if session.userinfo.name == 'Guest' %}
+            <p class="guestWarning">You are currently logged in as a Guest.</p>
+            <p class="guestWarning">Please note that as a guest, you will only be able to view a few pre-selected charts and will be unable to query the api manually.</p>
+
+    {% else %}
     <form method="post" action="/api">
         <input type="text" name="query" autofocus autocomplete="off" placeholder="Search for a Coin or Stock (e.g. BTC)">
         <input type="radio" name="type" value="Stock" required> Stock
@@ -29,6 +39,8 @@
     </form>
 
     <p> For the benefit of your fellow users, please try to keep your concurrent maximum charts at 5 or below so as not to surpass the API limit with a block of requests when the cache resets. Thank You.</p>
+
+{% endif %}
 {% if errortext %}
 
     <div><h2>{{errortext}}</h2></div>

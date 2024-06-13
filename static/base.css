@@ -9,6 +9,7 @@ header{
   color: rgb(137, 137, 137);
   background-color: rgb(17, 17, 17);
   display: flex;
+  margin-bottom: 1%;
 }
 
 body{
@@ -22,16 +23,20 @@ body{
 }
 
 h1{
-    font-size: 4vw;
+    font-size: 5vw;
     color: gold;
-    margin: auto;
+    margin-left: 30%;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .login{
     margin: 1%;
     border: 1px solid gold;
     border-radius: 20px;
-    display: flexbox;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
 }
 
 .login_info{
@@ -60,4 +65,16 @@ a{
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
+}
+
+img{
+    min-width: 70px;
+    min-height: 70px;
+    max-width: 96px;
+    max-height: 96px;
+}
+
+.guestWarning{
+    font-weight: bold;
+    color: silver;
 }
