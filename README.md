@@ -12,7 +12,8 @@ The project is primarily a remake and expansion upon a project I previously work
 
 ## Links and Resources
 
-- Front-End Application Link (TODO)
+- [Front-End Application Link](https://coin-canvas-eight.vercel.app)
+- [API Resource - Polygon.io](https://polygon.io)
 
 ## Setup
 
