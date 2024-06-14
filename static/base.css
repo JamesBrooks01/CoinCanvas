@@ -24,6 +24,7 @@ body{
 
 h1{
     font-size: 5vw;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: gold;
     margin-left: 30%;
     margin-top: auto;
@@ -45,7 +46,7 @@ h1{
     text-align: center;
 }
 
-a{
+.logButton{
     background-color: white;
     color: blue;
     border-radius: 10px;
@@ -77,4 +78,20 @@ img{
 .guestWarning{
     font-weight: bold;
     color: silver;
+}
+
+footer{
+    margin-top: 3%;
+    border: 1px solid gold;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: .25%;
+    padding-bottom: .25%;
+    padding-left: 2%;
+    padding-right: 2%;
+}
+
+.creditFooter{
+    color: violet;
 }
