@@ -46,7 +46,7 @@ h1{
     text-align: center;
 }
 
-a{
+.logButton{
     background-color: white;
     color: blue;
     border-radius: 10px;
@@ -78,4 +78,16 @@ img{
 .guestWarning{
     font-weight: bold;
     color: silver;
+}
+
+footer{
+    margin-top: 3%;
+    border: 1px solid gold;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: .25%;
+    padding-bottom: .25%;
+    padding-left: 2%;
+    padding-right: 2%;
 }
