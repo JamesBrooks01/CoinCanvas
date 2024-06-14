@@ -111,8 +111,7 @@ def index():
         return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
         session['user'] = {'userinfo': {"email": 'guest@coincanvas.com', 'name': 'Guest', 'picture': 'https://cdn.pixabay.com/photo/2017/11/10/05/46/group-2935521_1280.png'}}
-        data = session.get('user')
-        return render_template('index.html', session=data)
+        return redirect('/')
 
 @app.route("/login")
 def login():
