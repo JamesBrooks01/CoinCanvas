@@ -13,6 +13,7 @@ import requests_cache
 
 app = Flask(__name__)
 
+# Note, the cache is memory only in this version due to Vercel being serverless. It can freely and easily be turned into a SQLite database in other implementations.
 requests_cache.install_cache('requests_cache',backend='memory',expire_after=86400)
 
 
@@ -37,7 +38,7 @@ migrate = Migrate(app,db)
 
 def  fill_queries(user):
     if user == "guest@coincanvas.com":
-        return [['TSLA',"Stock"],['BTC',"Crypto"],["F", "Stock"],["RACE", "Stock"]]
+        return [["F", "Stock"],["RACE", "Stock"]]
     data = get_data(user)
     if data == None:
         create_user(user)
@@ -57,6 +58,7 @@ def api_grab(query,type):
     else:
         return 'Invalid Type'
     today = date.today()
+    # The timedelta goes back 150 days to account for weekends which Polygon.io doesn't include for Stock Market Data so that the chart can always recieve a full 100 days of data.
     past = today - datetime.timedelta(150)
     base_url = 'https://api.polygon.io/v2/aggs/ticker/'
     end_url = f'/range/1/day/{past}/{today}?adjusted=true&sort=asc'
@@ -78,6 +80,7 @@ def api_grab(query,type):
         requests.delete(f'{app_url}/update',data=data,headers=user_header)
         return 'Invalid Query'
     sliced_data = dict_converted_data['results']
+    # This is where the data gets santitized to include 100 days only. It just takes the last 100 entries from the response and returns it.
     sanitized_data = sliced_data[len(sliced_data)-100:]
     return sanitized_data
 
@@ -85,6 +88,7 @@ def graph(data):
     labels = [row['t'] for row in data]
     formatted_labels = []
     for label in labels:
+        # This timestamp stuff is due to the return time being a nanosecond Unix timestamp which needs to be converted down to milliseconds for the converter to return the correct date.
         formatted_date = label // 1000
         timestamped_date = date.fromtimestamp(formatted_date)
         formatted_labels.append(str(timestamped_date))
@@ -107,15 +111,18 @@ def index():
             if return_graph == 'Invalid Query':
                 error_message = "Invalid Query, Perhaps the name doesn't match the official name correctly or the type was selected wrong. Either refresh the page or try your query again. Thank You."
                 return render_template('index.html',errortext=error_message, session=data)
+            # This line appends the graphs to the list that gets passed to the template. It slices the graph according to the timeframe argument and returns the portion of the list that matches the desired timeframe.
             graphs.append(graph(return_graph[100-int(time_frame):]))
         return render_template("index.html", session=data, graphs=graphs, queries=user)
     else:
+        # This line is to create a dummy user for the session when the site is first visited to create basic funtionaility for Guests.
         session['user'] = {'userinfo': {"email": 'guest@coincanvas.com', 'name': 'Guest', 'picture': 'https://cdn.pixabay.com/photo/2017/11/10/05/46/group-2935521_1280.png'}}
         return redirect('/')
 
 @app.route("/login")
 def login():
     data = session.get('user')
+    # Due to the way the Guest user is implemented, when you "log in" as a user from a guest, the session needs to be cleared to make way for the new information.
     if data['userinfo']['name'] == "Guest":
         session.clear()
     return oauth.auth0.authorize_redirect(
@@ -179,6 +186,7 @@ def api():
     query = request.form.get('query')
     type = request.form.get('type')
     user = session.get('user')
+    # This check is put in to prevent any requests being made to this route from outside the code.
     if not user:
         return make_response('', 400)
     if type not in ['Stock', 'Crypto']:
