@@ -21,7 +21,7 @@ The project is primarily a remake and expansion upon a project I previously work
   - Database
     - POSTGRES_URL2 - The url for the database you plan to use. It is intended to be used with a PostgreSQL database and I do not know if it will work with others. For PostgreSQL, the format must be postgresql not postgres due to SQLALchemy not supporting the latter.
   - Auth0
-    - AUHT0_CLIENT_ID - The client id for your Auth0 Integration
+    - AUTH0_CLIENT_ID - The client id for your Auth0 Integration
     - AUTH0_CLIENT_SECRET - The client secret for your Auth0 Integration
     - AUTH0_DOMAIN -  The domain for your Auth0 Integration
   - API
